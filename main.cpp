@@ -1,7 +1,18 @@
 #include <vector>
 #include <iostream>
+#include <iomanip>
 #include "ThreadPool.h"
 #include "Determinant.h"
+
+void printMatrix(Determinant::type_matrix matrix) {
+	for (auto list : matrix) {
+		for (int el : list) {
+			std::cout << std::setfill(' ') << std::setw(2) << el << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
 
 int main() {
 	int threadsCount;
@@ -11,10 +22,13 @@ int main() {
 	std::vector<std::future<int>> results;
 
 	Determinant::type_matrix matrix = {
-		{ 4, 5, 2 },
-		{ 6, 4, 7 },
-		{ 8, 6, 2 }
+		{ 2,  3,  0,  5 },
+		{ 4, -3, -1,  1 },
+		{ 2,  5,  1,  3 },
+		{ 2,  7,  2, -2 }
 	};
+	printMatrix(matrix);
+	
 	for (size_t i = 0; i < matrix.size(); ++i) {
 		results.emplace_back(
 			pool.enqueue(
@@ -28,5 +42,5 @@ int main() {
 	for (auto&& result : results) {
 		determinant += result.get();
 	}
-	std::cout << determinant << std::endl;
+	std::cout << "Determinant is: " << determinant << std::endl;
 }
