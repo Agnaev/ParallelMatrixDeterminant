@@ -13,11 +13,12 @@ public:
 	~ThreadPool();
 
 	template<typename T>
-	auto enqueue(T task) -> std::future<decltype(task())> {
+	decltype(auto) enqueue(T task) {
 		auto wrapper = std::make_shared<std::packaged_task<decltype(task()) ()>>(std::move(task));
+
 		{
 			std::unique_lock<std::mutex> lock{ eventMutex };
-			tasks.emplace([=] {
+			tasks.emplace([=]() {
 				(*wrapper)();
 			});
 		}
